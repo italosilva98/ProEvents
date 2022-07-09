@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ProEventos.API.Data;
 using ProEventos.API.Models;
 
 namespace ProEventos.API.Controllers
@@ -11,51 +12,39 @@ namespace ProEventos.API.Controllers
     [Route("api/[controller]")]
     public class EventController : ControllerBase
     {
-
-        public IEnumerable<Event> _event = new List<Event>
-        {
-            new Event()
-            {
-                EventId = 1,
-                Theme = "Angular 11 and .NET 5",
-                City = "SP",
-                Batch = "1º",
-                AmountPeople = 250,
-                EventDate = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy"),
-                ImageURL = "file.png"
-            },
-            new Event()
-            {
-                EventId = 2,
-                Theme = "Angular 11 and .NET 5",
-                City = "SP",
-                Batch = "1º",
-                AmountPeople = 250,
-                EventDate = DateTime.Now.AddDays(5).ToString("dd/MM/yyyy"),
-                ImageURL = "file.png"
-            }
-        };
-
         private readonly ILogger<EventController> _logger;
+        private readonly DataContext _context;
 
-        public EventController(ILogger<EventController> logger)
+        public EventController(ILogger<EventController> logger, DataContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         [HttpGet]
-        public IEnumerable<Event> Get() => _event;
+        public IEnumerable<Event> Get() => _context.Events;
 
         [HttpGet("{id}")]
-        public IEnumerable<Event> GetById(int id) => _event.Where(eventActive => eventActive.EventId == id);
+        public Event GetById(int id)
+        {
+            try
+            {
+                return _context.Events.FirstOrDefault(eventActive => eventActive.EventId == id);
+            }
+            catch (System.Exception)
+            {
+
+                throw new Exception("teste");
+            }
+        }
 
         [HttpPost]
-        public IEnumerable<Event> Post() => _event;
+        public string Post() => "_event";
 
         [HttpPut]
-        public IEnumerable<Event> Put() => _event;
+        public string Put() => "_event";
 
         [HttpDelete]
-        public IEnumerable<Event> Delete() => _event;
+        public string Delete() => "_event";
     }
 }
